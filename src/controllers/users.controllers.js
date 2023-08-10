@@ -26,4 +26,24 @@ export async function signup(req, res) {
   }
 }
 
-export async function signin(req, res) {}
+export async function signin(req, res) {
+  const { email, password } = req.body;
+  const token = uuid();
+
+  try {
+    const user = (await db.query(`SELECT * from users WHERE email=$1`, [email]))
+      .rows[0];
+
+    if (!user || !bcrypt.compareSync(password, user.password))
+      return res.status(401).send("Usuário não existe ou senha incorreta!");
+
+    await db.query(`INSERT INTO sessions ("userId", token) VALUES ($1, $2)`, [
+      user.id,
+      token,
+    ]);
+    res.status(200).send({ token: token });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
