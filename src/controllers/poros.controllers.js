@@ -22,7 +22,10 @@ export async function getPoroById(req, res) {
         [id]
       )
     ).rows[0];
-    if (!poro) return res.status(404).send("O poro com esse id não existe!");
+    if (!poro)
+      return res
+        .status(404)
+        .send({ message: "O poro com esse id não existe!" });
 
     res.send(poro);
   } catch (error) {

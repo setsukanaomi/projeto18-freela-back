@@ -14,7 +14,7 @@ export async function signup(req, res) {
     if (userExists.rowCount > 0)
       return res
         .status(409)
-        .send("Esse CPF ou e-mail já se encontra cadastrado!");
+        .send({ message: "Esse CPF ou e-mail já se encontra cadastrado!" });
 
     await db.query(
       `INSERT INTO users ("name", cpf, email, telephone, "password") VALUES ($1, $2, $3, $4, $5)`,
@@ -35,7 +35,9 @@ export async function signin(req, res) {
       .rows[0];
 
     if (!user || !bcrypt.compareSync(password, user.password))
-      return res.status(401).send("Usuário não existe ou senha incorreta!");
+      return res
+        .status(401)
+        .send({ message: "Usuário não existe ou senha incorreta!" });
 
     await db.query(`INSERT INTO sessions ("userId", token) VALUES ($1, $2)`, [
       user.id,
@@ -46,4 +48,3 @@ export async function signin(req, res) {
     res.status(500).send(error.message);
   }
 }
-
