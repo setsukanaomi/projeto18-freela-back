@@ -2,8 +2,9 @@ import { db } from "../database/database.connection.js";
 
 export async function getPoros(req, res) {
   try {
-    const poros = (await db.query(`SELECT * FROM poros WHERE available=true`))
-      .rows;
+    const poros = (
+      await db.query(`SELECT * FROM poros WHERE available=true ORDER BY id`)
+    ).rows;
 
     res.status(200).send(poros);
   } catch (error) {
